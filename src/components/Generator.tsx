@@ -15,11 +15,11 @@ const EXAMPLES = [
 ];
 
 const THINKING_STEPS = [
-  { icon: 'ScanText', text: 'Токенизирую запрос, нормализую падежи и формы слов…' },
-  { icon: 'Brain', text: 'Определяю тематику по семантическим корням…' },
-  { icon: 'Palette', text: 'Подбираю палитру, типографику и стиль…' },
-  { icon: 'LayoutTemplate', text: 'Генерирую структуру страниц и секций…' },
-  { icon: 'PencilRuler', text: 'Создаю тексты, кнопки и контент…' },
+  { icon: 'ScanText', text: 'Snowball-стеммер: убираю падежи, спряжения, суффиксы…' },
+  { icon: 'BrainCircuit', text: 'Сопоставляю стемы с базой триллионов форм слов…' },
+  { icon: 'Target', text: 'Определяю тематику и семантическое поле…' },
+  { icon: 'Palette', text: 'Подбираю палитру и стиль по цветовым словам…' },
+  { icon: 'LayoutTemplate', text: 'Генерирую структуру страниц и секции…' },
   { icon: 'Sparkles', text: 'Собираю готовый сайт…' },
 ];
 
@@ -199,16 +199,19 @@ const Generator = ({ initialPrompt = '' }: Props) => {
             <button key={m.id} onClick={() => setModelId(m.id)}
               className={`relative text-left glass rounded-xl p-4 transition-all duration-200 ${modelId === m.id ? 'glow-border ring-1 ring-primary' : 'hover:-translate-y-0.5 opacity-75 hover:opacity-100'}`}>
               {m.badge && (
-                <span className="absolute top-3 right-3 text-[10px] font-bold bg-gradient-to-r from-primary to-accent text-background rounded-full px-2 py-0.5">{m.badge}</span>
+                <span className={`absolute top-3 right-3 text-[10px] font-bold rounded-full px-2 py-0.5 ${m.badge === 'GOD' ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-black' : 'bg-gradient-to-r from-primary to-accent text-background'}`}>{m.badge}</span>
               )}
-              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary/30 to-accent/30 grid place-items-center mb-3">
-                <Icon name={m.icon} size={18} className="text-accent" />
+              <div className={`w-9 h-9 rounded-lg grid place-items-center mb-3 ${m.id === 'nebula-ultra' ? 'bg-gradient-to-br from-yellow-400/30 to-orange-500/30' : 'bg-gradient-to-br from-primary/30 to-accent/30'}`}>
+                <Icon name={m.icon} size={18} className={m.id === 'nebula-ultra' ? 'text-yellow-400' : 'text-accent'} />
               </div>
               <p className="font-display font-semibold text-sm mb-1">{m.name}</p>
               <p className="text-xs text-muted-foreground leading-snug mb-2">{m.desc}</p>
               <span className="text-[11px] text-muted-foreground flex items-center gap-1">
                 <Icon name="Gauge" size={11} /> IQ {m.iq}
               </span>
+              {m.id === 'nebula-ultra' && (
+                <div className="mt-2 h-0.5 w-full bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 rounded-full animate-gradient-shift" style={{ backgroundSize: '200% auto' }} />
+              )}
             </button>
           ))}
         </div>
@@ -278,12 +281,36 @@ const Generator = ({ initialPrompt = '' }: Props) => {
 
           {/* AI reasoning */}
           <div className="glass rounded-2xl p-5">
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center justify-between mb-4">
               <p className="font-display font-semibold text-sm flex items-center gap-2">
                 <Icon name="BrainCircuit" size={16} className="text-accent" /> Анализ ИИ
               </p>
               <span className="font-display font-bold text-gradient text-sm">{result.confidence.toFixed(1)}% уверенности</span>
             </div>
+            {/* Confidence bar */}
+            <div className="mb-4">
+              <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
+                <div
+                  className={`h-full rounded-full bg-gradient-to-r ${result.palette.from} ${result.palette.to} transition-all duration-1000`}
+                  style={{ width: `${result.confidence}%` }}
+                />
+              </div>
+              <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
+                <span>0</span>
+                <span>Уверенность модели</span>
+                <span>100%</span>
+              </div>
+            </div>
+            {/* IQ display for Ultra */}
+            {modelId === 'nebula-ultra' && (
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-yellow-400/10 to-orange-500/10 border border-yellow-400/20 mb-4">
+                <Icon name="Sparkles" size={16} className="text-yellow-400 shrink-0" />
+                <div>
+                  <p className="text-xs font-display font-bold text-yellow-400">Nebula Ultra активна</p>
+                  <p className="text-[11px] text-muted-foreground">Snowball-морфология · 999 999 999 999 999 форм слов · все падежи и спряжения</p>
+                </div>
+              </div>
+            )}
             <div className="grid sm:grid-cols-2 gap-1.5">
               {result.reasoning.map((r) => (
                 <div key={r} className="flex items-start gap-2 text-xs text-muted-foreground">
