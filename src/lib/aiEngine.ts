@@ -732,7 +732,7 @@ const DEFAULT_INDUSTRY = makeIndustry([], {
 // ИЗВЛЕЧЕНИЕ НАЗВАНИЯ ПРОЕКТА
 // ═══════════════════════════════════════════════════════════════════════════════
 
-const STOP_TOKENS = new Set([
+const STOP_NAME_TOKENS = new Set([
   'и','в','на','с','для','по','из','о','а','но','что','как','это','то',
   'сайт','хочу','нужен','нужно','сделай','создай','мне','под','от','до',
   'бы','же','ли','или','за','при','без','над','перед','после','через',
@@ -747,9 +747,9 @@ function extractName(prompt: string): string {
   const words = prompt.split(/[\s,.!?:;()«»"'-]+/);
   for (let i = 1; i < words.length; i++) {
     const w = words[i];
-    if (w.length > 2 && /^[А-ЯЁA-Z]/.test(w) && !STOP_TOKENS.has(w.toLowerCase())) return w;
+    if (w.length > 2 && /^[А-ЯЁA-Z]/.test(w) && !STOP_NAME_TOKENS.has(w.toLowerCase())) return w;
   }
-  const sig = words.find((w) => w.length > 3 && !STOP_TOKENS.has(w.toLowerCase()));
+  const sig = words.find((w) => w.length > 3 && !STOP_NAME_TOKENS.has(w.toLowerCase()));
   if (sig) return sig[0].toUpperCase() + sig.slice(1).toLowerCase();
   return 'Мой Сайт';
 }
